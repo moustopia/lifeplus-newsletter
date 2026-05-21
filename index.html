@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>라플리 큐레이션 · 2026.05.25</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<!--
+  v8 — 사용자 피드백 전면 반영
+  · 헤더: LIFEPLUS 공식 로고, Vol·Season 표기 제거, 라플앱 링크 제거, 부태그 구체화
+  · 폰트 굵기: 중요 부분만 볼드(700), 나머지 일반(400)
+  · MC PICK → "이번 주 이동진·안현모·궤도의 PICK"
+  · 전시·팝업 디자인 통일 (위클리 픽처럼 풍선 라벨)
+  · 아카이브 4편 → 2편 (샤이닝·기묘한 이야기), 새 타이틀
+  · 키워드 검색 소개 — 3MC 직접 언급
+  · 첫 시작 인사말에서 "다음 레터에서 만나요" 완전 삭제, 끝에만 둠
+  · 실제 포스터 6장 (image/ 폴더)
+-->
+<style>
+  /* ===== LIFEPLUS 브랜드 폰트 ===== */
+  @font-face {
+    font-family: 'LIFEPLUS';
+    src: url('폰트/LIFEPLUS-Light.ttf') format('truetype');
+    font-weight: 100 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'LIFEPLUS';
+    src: url('폰트/LIFEPLUS-Medium.ttf') format('truetype');
+    font-weight: 500 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'LIFEPLUS';
+    src: url('폰트/LIFEPLUS-Bold.ttf') format('truetype');
+    font-weight: 700 900;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'LIFEPLUS', 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    color: #1a1a1a;
+    line-height: 1.75;
+    font-weight: 300;
+    background: #fff;
+    padding: 28px 14px;
+  }
+  .container {
+    max-width: 640px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 0;
+    overflow: hidden;
+  }
+  /* ===== 로고 헤더 ===== */
+  .logo-area {
+    text-align: center;
+    padding: 48px 24px 20px;
+  }
+  .logo-area img {
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 16px;
+    display: block;
+  }
+  .brand-subline {
+    font-size: 14px;
+    color: #1a1a1a;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+  }
+  .brand-tag {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+  .issue-line {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    padding: 6px 24px 28px;
+    font-weight: 500;
+  }
+  .issue-line a {
+    color: #7a5510;
+    text-decoration: underline;
+    margin-left: 6px;
+  }
+  /* ===== Body ===== */
+  .body-content { padding: 8px 30px 40px; }
+  /* 인사말 */
+  .greeting-para {
+    font-size: 14.5px;
+    color: #2a2a2a;
+    line-height: 1.95;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .greeting-para:last-of-type { margin-bottom: 44px; }
+  .greeting-para .signature {
+    color: #7a5510;
+    font-weight: 700;
+  }
+  /* 미리보기 박스 */
+  .preview-box {
+    border-top: 2px solid #1a1a1a;
+    border-bottom: 1px solid #ddd;
+    padding: 22px 0 22px;
+    margin-bottom: 56px;
+  }
+  .preview-h {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .preview-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    counter-reset: item;
+  }
+  .preview-list li {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #3a3a3a;
+    padding: 2px 0 2px 18px;
+    position: relative;
+    font-weight: 500;
+  }
+  .preview-list li::before {
+    content: counter(item) ".";
+    counter-increment: item;
+    position: absolute;
+    left: 0;
+    color: #7a5510;
+    font-weight: 700;
+  }
+  .preview-list li .key {
+    color: #1a1a1a;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  /* 무드 — 흰 배경 + 보더만 */
+  .mood-line {
+    text-align: center;
+    background: #fff;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #1a1a1a;
+    color: #1a1a1a;
+    padding: 24px 24px;
+    border-radius: 0;
+    margin: 0 0 56px;
+  }
+  .mood-line .label {
+    font-size: 10.5px;
+    color: #b08020;
+    letter-spacing: 2.5px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .mood-line h2 {
+    font-size: 17px;
+    line-height: 1.55;
+    font-weight: 700;
+    color: #3d2810;
+  }
+  /* ===== 풍선 라벨 (모든 섹션 동일) ===== */
+  .pill-label {
+    text-align: center;
+    margin: 64px 0 18px;
+  }
+  .pill-label .pill {
+    display: inline-block;
+    background: #b08020;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 8px 24px;
+    border-radius: 22px;
+    position: relative;
+  }
+  .pill-label .pill::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 8px solid #b08020;
+  }
+  .pill-subtitle {
+    text-align: center;
+    font-size: 19px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 28px;
+    letter-spacing: -0.3px;
+    line-height: 1.4;
+  }
+  /* ===== 신작 4편 그리드 ===== */
+  .pick-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .pick-tile {
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: #1a1a1a;
+  }
+  .pick-tile img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .pick-tile .num-tag {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    width: 26px; height: 26px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* 신작 본문 텍스트 */
+  .pick-text {
+    font-size: 14px;
+    line-height: 1.95;
+    color: #2a2a2a;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  .pick-text .num {
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-right: 2px;
+  }
+  .pick-text .work {
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+  .pick-text .work-emoji { margin-left: 2px; }
+  .pick-text .link-style {
+    color: #7a5510;
+    border-bottom: 1px solid #b08020;
+    text-decoration: none;
+  }
+  /* 📝 라플리 밑줄 — 시그니처 인용 박스 (콘텐츠 설명과 한 세트) */
+  .lapli-quote-box {
+    background: #fafafa;
+    border-left: 3px solid #b08020;
+    border-radius: 0 4px 4px 0;
+    padding: 14px 18px;
+    margin: -14px 0 56px;
+  }
+  .lapli-quote-box .lqb-label {
+    font-size: 11px;
+    color: #b08020;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .lapli-quote-box .lqb-quote {
+    font-size: 13.5px;
+    line-height: 1.75;
+    color: #2a2a2a;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .lapli-quote-box .lqb-by {
+    font-size: 11.5px;
+    color: #888;
+    font-weight: 500;
+  }
+  /* 라플리 자기 호명 — 본문과 구분되게 줄바꿈 + 살짝 떨어뜨림 */
+  .lapli-voice {
+    color: #7a5510;
+    font-weight: 700;
+  }
+  .lapli-voice::before {
+    content: "";
+    display: block;
+    margin-top: 14px;
+  }
+  /* 각주 */
+  .footnote-mark {
+    font-size: 10px;
+    color: #b08020;
+    vertical-align: super;
+    margin-left: 1px;
+    font-weight: 700;
+  }
+  .footnote-line {
+    font-size: 11.5px;
+    color: #888;
+    line-height: 1.7;
+    margin: 2px 22px 4px;
+    padding: 8px 14px;
+    background: #fafaf3;
+    border-radius: 4px;
+    font-weight: 300;
+  }
+  .footnote-line .fn-num {
+    color: #b08020;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  /* 피드백 박스 */
+  .feedback-box {
+    background: #fff;
+    border: 1.5px solid #ead9a8;
+    border-radius: 10px;
+    padding: 24px 24px 22px;
+    margin: 56px 0 24px;
+    text-align: center;
+  }
+  .feedback-box .fb-h {
+    font-size: 14.5px;
+    color: #1a1a1a;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .feedback-box .fb-sub {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 16px;
+    font-weight: 500;
+    line-height: 1.65;
+  }
+  .feedback-box .fb-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .feedback-box .fb-btn {
+    flex: 1;
+    max-width: 160px;
+    text-decoration: none;
+    background: #faf7ee;
+    border: 1px solid #d8cea8;
+    color: #5a4310;
+    padding: 11px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+    display: inline-block;
+  }
+  .feedback-box .fb-btn:hover {
+    background: #b08020;
+    color: #fff;
+    border-color: #b08020;
+  }
+  /* 라플리의 이번 주 발견 (인사말 끝 한 줄) */
+  .lapli-find {
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
+    line-height: 1.75;
+    margin: 8px 0 16px;
+    padding: 10px 14px;
+    border-left: 2px solid #ead9a8;
+    background: #fffcf3;
+    font-weight: 500;
+  }
+  .lapli-find::before {
+    content: "🌿 ";
+    font-style: normal;
+  }
+  /* MC PICK 카드 — 흰 배경 + 보더 */
+  .mc-pick {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 0;
+    padding: 0 0 22px;
+    margin: 32px 0 12px;
+    overflow: hidden;
+  }
+  /* 3MC 사진 배너 — 흰 배경으로 통일 */
+  .mc-trio-banner {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #fff;
+    overflow: hidden;
+  }
+  .mc-trio-banner img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+    display: block;
+  }
+  .mc-pick .mc-h {
+    font-size: 17px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 18px 22px 8px;
+    line-height: 1.4;
+    letter-spacing: -0.2px;
+  }
+  .mc-pick .mc-sub {
+    font-size: 13px;
+    color: #5a4310;
+    line-height: 1.8;
+    margin: 0 22px 18px;
+    font-weight: 500;
+  }
+  .mc-pick .mc-frame {
+    display: flex;
+    gap: 14px;
+    background: #fafafa;
+    padding: 14px;
+    border-radius: 4px;
+    margin: 0 22px 14px;
+  }
+  .mc-pick .mc-thumb {
+    flex-shrink: 0;
+    width: 130px;
+    aspect-ratio: 16/9;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #1a1a1a;
+  }
+  .mc-pick .mc-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .mc-pick .mc-body { flex: 1; line-height: 1.55; }
+  .mc-pick .mc-recommender {
+    font-size: 11.5px;
+    color: #7a5510;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .mc-pick .mc-work {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .mc-pick .mc-quote {
+    font-size: 12.5px;
+    color: #3d3d3d;
+    line-height: 1.65;
+    font-weight: 500;
+  }
+  .mc-pick .mc-go {
+    display: block;
+    text-align: center;
+    background: #1a1a1a;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 13px;
+    border-radius: 8px;
+    margin: 0 22px;
+  }
+  .mc-pick .mc-go .arrow { color: #d9a849; margin-left: 6px; }
+  /* ===== 전시·팝업 그리드 (신작 그리드와 디자인 통일 + 캡션 오버레이) ===== */
+  .spot-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .spot-tile {
+    aspect-ratio: 1 / 1.05;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    background: #1a1a1a;
+  }
+  .spot-tile img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .spot-tile .num-tag {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    background: #1a1a1a;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    width: 26px; height: 26px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .spot-tile .caption-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 70%);
+    padding: 32px 12px 12px 42px;
+    color: #fff;
+    z-index: 1;
+  }
+  .spot-tile .ov-title {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 3px;
+  }
+  .spot-tile .ov-sub {
+    font-size: 11px;
+    color: #ccc;
+    line-height: 1.45;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .spot-tile .ov-meta {
+    font-size: 10.5px;
+    color: #aaa;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+  /* ===== 아카이브 (2편 — 가로 16:9 명장면 + 텍스트 흐름) ===== */
+  .archive-intro {
+    font-size: 14px;
+    line-height: 1.95;
+    color: #2a2a2a;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .archive-intro + .footnote-line {
+    margin-top: 6px;
+    margin-bottom: 32px;
+  }
+  .archive-card {
+    margin-bottom: 44px;
+  }
+  .archive-card:last-child { margin-bottom: 0; }
+  .archive-scene {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #1a1a1a;
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .archive-scene img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .scene-credit {
+    text-align: right;
+    font-size: 11px;
+    color: #aaa;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .a-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .a-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.4;
+  }
+  .a-stars {
+    color: #f59e0b;
+    font-size: 14px;
+    letter-spacing: 2px;
+    font-weight: 500;
+  }
+  .a-by {
+    font-size: 12px;
+    color: #7a5510;
+    font-weight: 700;
+  }
+  .a-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .a-ott {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .a-ott .ott-tag {
+    display: inline-block;
+    border: 1px solid #d8cea8;
+    background: #faf7ee;
+    color: #7a5510;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    letter-spacing: 0.2px;
+  }
+  .a-recommender-quote {
+    background: #faf7ee;
+    border-left: 2px solid #b08020;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #3d2810;
+    font-weight: 500;
+  }
+  .a-recommender-quote strong {
+    color: #7a5510;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .a-quote {
+    font-size: 13.5px;
+    color: #3a3a3a;
+    line-height: 1.85;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+  .a-link {
+    font-size: 12.5px;
+    color: #b08020;
+    text-decoration: none;
+    font-weight: 700;
+    border-bottom: 1.5px solid #b08020;
+    padding-bottom: 1px;
+  }
+  /* 라플리의 한 줄 — 흰 배경 + 골드 좌측 보더 */
+  .lapli-comment {
+    background: #fff;
+    border-left: 3px solid #b08020;
+    color: #1a1a1a;
+    padding: 24px 26px;
+    border-radius: 0;
+    margin: 56px 0 56px;
+  }
+  .lapli-comment .label {
+    font-size: 11px;
+    color: #b08020;
+    letter-spacing: 1.3px;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .lapli-comment p {
+    font-size: 13.5px;
+    line-height: 1.95;
+    color: #2a2a2a;
+    font-weight: 500;
+  }
+  /* 키워드 검색 */
+  .archive-search {
+    background: #faf7ee;
+    border-radius: 10px;
+    padding: 24px;
+    margin: 44px 0 24px;
+  }
+  .as-h {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .as-sub {
+    font-size: 12.5px;
+    color: #5a4310;
+    line-height: 1.7;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .as-input-wrap {
+    background: #fff;
+    border: 1px solid #d8cea8;
+    border-radius: 8px;
+    padding: 3px 5px 3px 14px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .as-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    padding: 10px 4px;
+    color: #1a1a1a;
+    background: transparent;
+    font-family: inherit;
+    font-weight: 500;
+  }
+  .as-search-btn {
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    padding: 9px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .as-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .as-chip {
+    background: #fff;
+    border: 1px solid #d8cea8;
+    color: #5a4310;
+    padding: 6px 11px;
+    border-radius: 16px;
+    font-size: 11.5px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+  }
+  .as-chip:hover { background: #b08020; color: #fff; border-color: #b08020; }
+  .as-result {
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px 16px;
+    display: none;
+  }
+  .as-result.show { display: block; }
+  .as-result-prompt {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .as-result-card {
+    display: flex;
+    gap: 14px;
+    border-bottom: 1px solid #f0ede5;
+    padding: 14px 0 16px;
+  }
+  .as-result-card:last-child { border-bottom: none; padding-bottom: 0; }
+  .as-result-poster {
+    flex-shrink: 0;
+    width: 70px;
+    aspect-ratio: 9/16;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #1a1a1a;
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+  .as-result-poster svg { width: 100%; height: 100%; display: block; }
+  .as-result-body { flex: 1; min-width: 0; }
+  .as-result-recommender {
+    display: inline-block;
+    background: #faf7ee;
+    border: 1px solid #d8cea8;
+    color: #7a5510;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    letter-spacing: 0.2px;
+  }
+  .as-result-meta {
+    font-size: 11px;
+    color: #888;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .as-result-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .as-result-recquote {
+    background: #faf7ee;
+    border-left: 2px solid #b08020;
+    padding: 8px 12px;
+    margin: 8px 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #3d2810;
+    font-weight: 500;
+    border-radius: 0 4px 4px 0;
+  }
+  .as-result-recquote strong {
+    color: #7a5510;
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .as-result-reason {
+    font-size: 11.5px;
+    color: #5a5a5a;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .as-result-link {
+    font-size: 11px;
+    color: #b08020;
+    text-decoration: none;
+    font-weight: 700;
+    margin-top: 4px;
+    display: inline-block;
+  }
+  .as-disclaimer {
+    font-size: 10.5px;
+    color: #888;
+    margin-top: 10px;
+    line-height: 1.6;
+    font-style: italic;
+    font-weight: 500;
+  }
+  /* 푸터 */
+  .sign-off {
+    text-align: center;
+    margin: 40px 0 20px;
+    font-size: 13px;
+    color: #888;
+    line-height: 1.95;
+    font-weight: 500;
+  }
+  .sign-off .lapli-name {
+    color: #1a1a1a;
+    font-weight: 700;
+  }
+  footer {
+    background: #fafafa;
+    padding: 26px 32px;
+    border-top: 1px solid #eee;
+    text-align: center;
+  }
+  footer p {
+    font-size: 11px;
+    color: #999;
+    line-height: 1.7;
+    font-weight: 500;
+  }
+  footer .brand-bottom {
+    font-size: 10px;
+    color: #aaa;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+  @media (max-width: 600px) {
+    body { padding: 20px 10px; }
+    .body-content { padding: 8px 20px 30px; }
+    .logo-area { padding: 36px 18px 14px; }
+    .archive-grid { grid-template-columns: 1fr 1fr; }
+    .mc-pick .mc-frame { flex-direction: column; }
+    .mc-pick .mc-thumb { width: 100%; aspect-ratio: 16/9; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ===== 로고 헤더 ===== -->
+  <div class="logo-area">
+    <img src="image/lifeplus-logo.png" alt="LIFEPLUS">
+    <div class="brand-subline">라플리의 큐레이션</div>
+    <div class="brand-tag">매주 월요일 아침 8시, 이번 주 핫한 콘텐츠와 전시·공연 정보를 알려드려요</div>
+  </div>
+
+  <div class="issue-line">
+    2026.05.25 (월)<a href="#">전체 화면으로 읽기</a>
+  </div>
+
+  <div class="body-content">
+
+    <!-- ===== 인사말 ===== -->
+    <p class="greeting-para">
+      5월의 마지막 주가 시작됐네요. 라플리는 요즘 퇴근길에 일부러 한 정거장 먼저 내려서 걷고 있어요. 해가 길어지니까 저녁 7시인데도 환하고, 골목마다 카페 의자가 길까지 나와 있더라고요. 곧 사라질 봄을 조금이라도 더 붙잡고 싶었나봐요. 라플리어도 비슷한 마음이지 않을까 싶어서, 오늘 레터를 준비해봤어요.
+    </p>
+    <p class="greeting-para">
+      오늘은 <strong>이번 주 추천 콘텐츠 6편</strong>을 모아왔어요. 우연히 초능력을 얻은 동네 사람들이 빌런에 맞서는 신작 〈원더풀스〉부터, 11년 만에 스크린으로 돌아온 전지현의 〈군체〉, 평생 산 하나만 그린 작가의 회고전까지. 5월의 끝에서 한 번쯤 다른 풍경을 만나보면 좋겠어요. 한 주 잘 보내시고, 라플리는 다음 월요일 아침 8시에 또 인사드릴게요.
+      <br><br>
+      <span class="signature">by. 라플리 🪐</span>
+    </p>
+
+    <!-- ===== 미리보기 ===== -->
+    <div class="preview-box">
+      <div class="preview-h">오늘 라플리가 골라온 한 주 👀</div>
+      <ol class="preview-list">
+        <li><span class="key">위클리 픽</span> 5월 후반 신작 4편 — 원더풀스 · 소울메이트 · 취사병 전설이 되다 · 군체</li>
+        <li><span class="key">이동진·안현모·궤도의 PICK</span> 안현모가 박은빈·유인식 감독과 직접 만난 〈원더풀스〉 회차</li>
+        <li><span class="key">이번 주 꼭 가봐야 할 전시·팝업</span> 유영국 회고전 · 포켓몬 30주년 팝업</li>
+        <li><span class="key">5월의 마지막을 채울 한 편 더</span> 비슷한 결로 빠져드는 추천 2편 (별점·한줄평)</li>
+      </ol>
+    </div>
+
+    <!-- ===== 무드 ===== -->
+    <div class="mood-line">
+      <div class="label">★ MOOD OF THE WEEK</div>
+      <h2>"이번 주는 SF·좀비·예술까지, 색다른 콘텐츠 6편"</h2>
+    </div>
+
+    <!-- ===== 위클리 픽 ===== -->
+    <div class="pill-label"><span class="pill">weekly pick</span></div>
+    <div class="pill-subtitle">이번 주 뭘 볼까?</div>
+
+    <div class="pick-grid">
+      <div class="pick-tile">
+        <img src="https://occ-0-8407-90.1.nflxso.net/dnm/api/v6/MgXQGyNr1xbI8tJSYiMWv5kXg5g/AAAABd6XpF5O6A0Nn1N6DFN1APYNhe6Q_ZWBvavB5-5E1qS8xoJMlxyOvJt31--gJ6xBAmHKivxXUh0n9x_AKWZptC7da3tWHXBAfSRafyqOwIt17HFOwzWD2DXS3Q.jpg?r=00e" alt="원더풀스">
+        <span class="num-tag">1</span>
+      </div>
+      <div class="pick-tile">
+        <img src="https://occ-0-8407-92.1.nflxso.net/dnm/api/v6/MgXQGyNr1xbI8tJSYiMWv5kXg5g/AAAABXXt5nBgpIAHYiKCqIkUpDk33KM1jHbrNgKNZU2hob6OQ6p-FC2gLIVpXDLexurbGgWZBfB8GnmIkZZrF8duA8W5e8HVBBw1FBt6Rw_LjF-bnKUll_ziS5BrZg.jpg?r=937" alt="소울메이트">
+        <span class="num-tag">2</span>
+      </div>
+      <div class="pick-tile">
+        <img src="image/kitchen-soldier.jpg" alt="취사병 전설이 되다">
+        <span class="num-tag">3</span>
+      </div>
+      <div class="pick-tile">
+        <img src="image/gunche.jpg" alt="군체">
+        <span class="num-tag">4</span>
+      </div>
+    </div>
+
+    <p class="pick-text">
+      <span class="num">1.</span> <span class="work">원더풀스</span><span class="work-emoji">⚡</span>: 넷플릭스에서 〈이상한 변호사 우영우〉의 유인식 감독과 박은빈 배우가 다시 만난 작품을 공개했어요. 세기말 1999년을 배경으로, 우연히 초능력을 얻은 동네 사람들이 빌런에 맞서는 코믹 어드벤처인데요. 우영우의 따뜻한 결이 초능력 장르로 옮겨가면 어떻게 풀릴지, 답을 보여주는 작품이라고. 8부작 전편이 5월 15일에 풀려서 주말 몰아보기에 딱이라고 해요.
+    </p>
+    <div class="lapli-quote-box">
+      <div class="lqb-label">📝 라플리 밑줄</div>
+      <div class="lqb-quote">"초능력자라기엔 다들 어딘가 허당이에요. 그래서 더 사랑스러워요."</div>
+      <div class="lqb-by">— 동네 허당들이 빌런과 맞붙는 〈원더풀스〉 1화 본 직후, 라플리</div>
+    </div>
+
+    <p class="pick-text">
+      <span class="num">2.</span> <span class="work">소울메이트</span><span class="work-emoji">🌌</span>: 같은 주에 넷플릭스에서 한일 합작 8부작도 함께 공개됐어요. 베를린·서울·도쿄 세 도시를 오가며, 일본을 떠나온 '류'와 한국인 복서 '요한'이 우연히 마주쳐 10년의 인연을 이어가는 이야기인데요. 옥택연이 5년 만에 드라마로 돌아온 작품이라 화제라고. 잔잔한 호흡 안에 감정선이 깊게 흐른다는 첫 회 반응이 많다고 해요.
+    </p>
+    <div class="lapli-quote-box">
+      <div class="lqb-label">📝 라플리 밑줄</div>
+      <div class="lqb-quote">"베를린의 새벽 골목, 손바닥만큼 보이는 하늘 — 이 시리즈는 도시 자체가 또 하나의 인물이에요."</div>
+      <div class="lqb-by">— 베를린 새벽 골목에서 두 남자가 마주치는 〈소울메이트〉 예고편 본 후, 라플리</div>
+    </div>
+
+    <p class="pick-text">
+      <span class="num">3.</span> <span class="work">취사병 전설이 되다</span><span class="work-emoji">🍳</span>: tvN과 티빙에서 이등병 강성재가 '전설의 취사병'으로 거듭나는 밀리터리 쿡방 판타지가 공개 중이에요. 게임처럼 화면에 퀘스트 UI가 뜨는 연출이 MZ 결에 꽂혀서, 첫 주에 티빙 유료 구독 기여 1위와 tvN 가구 시청률 6.2%로 출발했다고. 이번 주 25(월)·26(화)에 새 회차가 공개돼요. 3화부터 들어가도 부담 없으니, 1·2화는 티빙 다시보기로 따라잡으면 된다고 해요.
+    </p>
+    <div class="lapli-quote-box">
+      <div class="lqb-label">📝 라플리 밑줄</div>
+      <div class="lqb-quote">"퇴근하고 라면 하나 끓이는 일이 퀘스트가 되는 세계. 의외로 위로돼요."</div>
+      <div class="lqb-by">— 이등병이 전설이 되어가는 〈취사병 전설이 되다〉 1·2화 정주행 후, 라플리</div>
+    </div>
+
+    <p class="pick-text">
+      <span class="num">4.</span> <span class="work">군체</span><span class="work-emoji">🧟</span>: 극장에서는 전지현이 11년 만에 스크린으로 돌아온 작품이 화제예요. 〈부산행〉 연상호 감독이 다시 풀어낸 K-좀비인데, 이번엔 '집단지성으로 업데이트되는 좀비'라는 새 설정이 핵심이라고. 칸 영화제 미드나잇 스크리닝에서 7분 기립박수를 받고 5월 21일 곧장 국내 개봉했고, 첫 주 예매량 18만 돌파로 예매율 1위를 기록했다고 해요. <a class="link-style" href="https://www.lottecinema.co.kr" target="_blank">롯데시네마 예매</a>
+    </p>
+    <div class="lapli-quote-box">
+      <div class="lqb-label">📝 라플리 밑줄</div>
+      <div class="lqb-quote">"좀비가 학습한다는 한 줄 — 그게 이 영화의 가장 무서운 지점이에요."</div>
+      <div class="lqb-by">— 11년 만에 돌아온 전지현이 좀비를 마주한 〈군체〉 시사회 후, 라플리</div>
+    </div>
+
+    <!-- ===== MC PICK ===== -->
+    <div class="mc-pick">
+      <div class="mc-trio-banner">
+        <img src="image/mc-trio.jpg" alt="라플위클리 토크 3MC — 궤도·안현모·이동진">
+      </div>
+      <div class="mc-h">🎙️ 이번 주 이동진·안현모·궤도의 PICK</div>
+      <div class="mc-sub"><span class="lapli-voice">라플리:</span> 신작 한 편을 더 깊게 즐기고 싶지 않으세요? 마침 안현모가 〈원더풀스〉의 박은빈 배우·유인식 감독을 직접 만나서 푼 회차<span class="footnote-mark">*</span>가 있어요. 영상 첫 부분부터 바로 들어갈 수 있는 링크예요.</div>
+      <div style="margin: 0 22px 14px;">
+        <div class="footnote-line"><span class="fn-num">*</span> 라플위클리 HOT &amp; NEW — 라플위클리 토크의 자매 코너로, 한 편의 화제 신작을 만든 사람이 직접 출연해서 풀어요.</div>
+      </div>
+
+      <div class="mc-frame">
+        <div class="mc-thumb">
+          <img src="https://i.ytimg.com/vi/0PqrJ4eufrs/hqdefault.jpg" alt="라플위클리 HOT & NEW ep.11">
+        </div>
+        <div class="mc-body">
+          <div class="mc-recommender">⊙ 안현모 with 박은빈·유인식 감독</div>
+          <div class="mc-work">라플위클리 HOT &amp; NEW ep.11 〈원더풀스〉</div>
+          <div class="mc-quote">"INFP 모임이라고 부를 만한 작품의 결 — 박은빈 배우가 우영우 다음에 왜 이 작품을 선택했는지 직접 들을 수 있어요."</div>
+        </div>
+      </div>
+
+      <a class="mc-go" href="https://youtu.be/0PqrJ4eufrs" target="_blank">
+        안현모와 함께하는 〈원더풀스〉 토크 보러가기 <span class="arrow">→</span>
+      </a>
+    </div>
+
+    <!-- ===== 전시·팝업 (신작과 동일한 디자인) ===== -->
+    <div class="pill-label"><span class="pill">weekend spot</span></div>
+    <div class="pill-subtitle">이번 주 꼭 가봐야 할 전시·팝업</div>
+
+    <div class="spot-grid">
+      <div class="spot-tile">
+        <img src="https://news.seoul.go.kr/culture/files/2026/05/6a05304ff015c6.96665976.jpg" alt="유영국: 산은 내 안에 있다">
+        <span class="num-tag">1</span>
+        <div class="caption-overlay">
+          <div class="ov-title">유영국: 산은 내 안에 있다</div>
+        </div>
+      </div>
+      <div class="spot-tile">
+        <img src="image/pokemon-popup.jpg" alt="포켓몬 30주년 파티 팝업">
+        <span class="num-tag">2</span>
+        <div class="caption-overlay">
+          <div class="ov-title">포켓몬 30주년 파티 팝업</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="pick-text">
+      <span class="num">1.</span> <span class="work">유영국: 산은 내 안에 있다</span><span class="work-emoji">⛰️</span>: 서울시립미술관 서소문본관에서 한국 추상미술의 선구자 유영국(1916-2002)의 탄생 110주년 회고전이 열리고 있어요. 미공개작 포함 170여 점, 60여 년 화업이 한 공간에 펼쳐진다고. 평생 '산' 하나를 그린 작가의 일생이 한 폭에 응축되는 감각이 깊게 남는다고 해요. 무료 관람이라 부담 없이 들를 수 있어요. <span style="color:#888;">~10.25</span>
+    </p>
+    <p class="pick-text">
+      <span class="num">2.</span> <span class="work">포켓몬 30주년 파티 팝업</span><span class="work-emoji">🎂</span>: 성수동 트렌드팟 바이 올리브영N에서 피카츄와 친구들의 30주년 생일 파티 콘셉트 팝업을 운영 중이에요. 풍선·케이크·리본으로 가득한 공간에, 30주년 한정 '피카피카! 피카츄' 봉제 인형이 가장 인기라고. 5월 한 달 운영하는데 이번 주말이 마지막 주차예요. 주말엔 굿즈가 빨리 소진되니까 토요일 오전이 가장 한적하다고 해요. <span style="color:#888;">~5.31</span>
+    </p>
+
+    <!-- ===== 라플리가 추천하는 콘텐츠 ===== -->
+    <div class="pill-label"><span class="pill">one more pick</span></div>
+    <div class="pill-subtitle">라플리가 추천하는 콘텐츠</div>
+
+    <p class="archive-intro">
+      신작 4편을 다 보셨다면, 같은 결로 한 번 더 빠져들 수 있는 두 편이에요. 이동진·안현모·궤도가 라플위클리 토크에서 직접 짚었던 작품 중에서, 이번 주 무드와 가장 어울리는 두 편을 골라왔어요.
+    </p>
+
+    <div class="archive-card">
+      <div class="archive-scene">
+        <img src="image/shining-scene.jpg" alt="샤이닝 명장면">
+      </div>
+
+      <div class="a-title-row">
+        <span class="a-title">샤이닝 (The Shining, 1980)</span>
+        <span class="a-stars">★★★★★</span>
+      </div>
+      <div class="a-meta-row">
+        <span class="a-by">⊙ 이동진 추천</span>
+        <span class="a-ott">
+          <span class="ott-tag">왓챠</span>
+          <span class="ott-tag">웨이브</span>
+        </span>
+      </div>
+      <div class="a-recommender-quote">
+        <strong>이동진의 한마디</strong> · "5월의 끝자락, 좌우대칭의 호러 한 편으로 한 주를 닫아보세요."
+      </div>
+      <p class="a-quote">
+        호러로 알려진 작품인데, 다시 보면 한 가족이 고립된 공간에서 무너지는 심리극에 가깝다고. 큐브릭의 좌우대칭 구도부터 짚어보면, 호텔의 공간 자체가 또 하나의 캐릭터처럼 작동한다는 게 보인다고 해요.
+      </p>
+      <a class="a-link" href="https://www.youtube.com/playlist?list=PLf6PhSneZCi1sfz70GDneQeKvQS_x64rn" target="_blank">라플위클리 토크에서 더 보기 →</a>
+    </div>
+
+    <div class="archive-card">
+      <div class="archive-scene">
+        <img src="image/stranger-things-scene.jpg" alt="기묘한 이야기 명장면">
+      </div>
+
+      <div class="a-title-row">
+        <span class="a-title">기묘한 이야기 (Stranger Things)</span>
+        <span class="a-stars">★★★★★</span>
+      </div>
+      <div class="a-meta-row">
+        <span class="a-by">⊙ 안현모 추천</span>
+        <span class="a-ott">
+          <span class="ott-tag">넷플릭스</span>
+        </span>
+      </div>
+      <div class="a-recommender-quote">
+        <strong>안현모의 한마디</strong> · "퇴근하고 한 회씩, 80년대 정서의 초능력 시리즈에 빠져보세요."
+      </div>
+      <p class="a-quote">
+        80년대 미국 시골 마을에 스티븐 킹 결의 초자연이 더해진 시리즈예요. 일레븐의 초능력이 사춘기와 겹쳐 가는 결이 특별하다고. 시즌이 거듭될수록 인물들의 성장도 함께 따라가는 재미가 있다고 해요.
+      </p>
+      <a class="a-link" href="https://www.youtube.com/playlist?list=PLf6PhSneZCi1sfz70GDneQeKvQS_x64rn" target="_blank">라플위클리 토크에서 더 보기 →</a>
+    </div>
+
+    <!-- ===== 라플리의 한 줄 ===== -->
+    <div class="lapli-comment">
+      <div class="label">💭 라플리의 한 줄</div>
+      <p>
+        퇴근길에 한 정거장 먼저 내려서 걷는 일, 점심에 평소 안 가던 골목으로 들어가는 일, 영화 한 편 보고 평소엔 안 듣던 OST를 찾아 듣는 일 — 라플리는 이런 작은 순간들이 화면 속 초능력만큼이나 한 주를 달라지게 한다고 믿어요. 이번 주 6편이 그런 작은 환기 하나를 만들어드릴 수 있다면, 첫 호의 임무 완수예요 ✨
+      </p>
+    </div>
+
+    <!-- ===== 키워드 검색 ===== -->
+    <div class="archive-search">
+      <div class="as-h">🔍 지금 기분에 맞는 한 편, 더 찾아드릴까요</div>
+      <p class="as-sub">
+        상황·무드·기분·분위기에 따라 콘텐츠를 추천해드려요. 이동진·안현모·궤도가 라플위클리 토크에서 짚어온 629편의 아카이브 안에서, 라플리가 추천 이유와 함께 꺼내드릴게요.
+      </p>
+
+      <div class="as-input-wrap">
+        <input type="text" id="asInput" class="as-input" placeholder="예: 퇴근 후 보기 좋은 잔잔한 일본영화">
+        <button class="as-search-btn" onclick="archiveSearch()">검색</button>
+      </div>
+
+      <div class="as-chips">
+        <button class="as-chip" onclick="archiveSearch('퇴근 후 보기 좋은 잔잔한 일본영화')">퇴근 후 보기 좋은 잔잔한 일본영화</button>
+        <button class="as-chip" onclick="archiveSearch('주말에 시간 들여 볼 SF 명작')">주말에 시간 들여 볼 SF 명작</button>
+        <button class="as-chip" onclick="archiveSearch('혼자 보기 좋은 미스터리')">혼자 보기 좋은 미스터리</button>
+        <button class="as-chip" onclick="archiveSearch('비 오는 날에 어울리는 잔잔한 영화')">비 오는 날에 어울리는 잔잔한 영화</button>
+        <button class="as-chip" onclick="archiveSearch('마음이 헛헛할 때 보기 좋은 영화')">마음이 헛헛할 때 보기 좋은 영화</button>
+        <button class="as-chip" onclick="archiveSearch('어른이 되어 다시 보면 좋은 동화')">어른이 되어 다시 보면 좋은 동화</button>
+        <button class="as-chip" onclick="archiveSearch('출근길에 가볍게 듣기 좋은 다큐')">출근길에 가볍게 듣기 좋은 다큐</button>
+        <button class="as-chip" onclick="archiveSearch('한 번 더 보고 싶은 한국 영화')">한 번 더 보고 싶은 한국 영화</button>
+        <button class="as-chip" onclick="archiveSearch('연인과 함께 보기 좋은 영화')">연인과 함께 보기 좋은 영화</button>
+      </div>
+
+      <div id="asResult" class="as-result"></div>
+    </div>
+
+    <!-- ===== 피드백 박스 ===== -->
+    <div class="feedback-box">
+      <div class="fb-h">오늘 레터, 어떠셨어요?</div>
+      <div class="fb-sub">한 줄 의견이 다음 호를 한 결 더 다듬어요.</div>
+      <div class="fb-buttons">
+        <a class="fb-btn" href="#" target="_blank">👍 좋았어요</a>
+        <a class="fb-btn" href="#" target="_blank">🤔 아쉬웠어요</a>
+      </div>
+    </div>
+
+    <div class="sign-off">
+      한 주 잘 보내시고, 다음 월요일 아침 8시에 또 만나요.<br>
+      <span class="lapli-name">— 라플리 드림</span>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>라플리는 LIFEPLUS TV의 큐레이션 에이전트예요. 매주 월요일 아침 8시에 한 주의 결을 보내드려요.</p>
+    <p style="margin-top: 6px;">함께 읽고 싶은 친구가 있다면? <a href="#" style="color:#b08020; text-decoration: underline;">구독 링크 공유하기</a></p>
+    <p class="brand-bottom">한화생명 LIFEPLUS · 본 뉴스레터는 시연용 1호입니다.</p>
+  </footer>
+
+</div>
+
+<script>
+  const PLAYLIST = 'https://www.youtube.com/playlist?list=PLf6PhSneZCi1sfz70GDneQeKvQS_x64rn';
+
+  function miniPoster(theme) {
+    const t = {
+      'jp-quiet': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#1e3a8a"/></linearGradient></defs><rect width="90" height="160" fill="url(#m1)"/><circle cx="45" cy="55" r="16" fill="#fff" opacity="0.55"/><path d="M0 110 Q22 100 45 108 T90 105 L90 160 L0 160 Z" fill="#0f172a" opacity="0.55"/><text x="45" y="150" font-size="7" fill="#fff" text-anchor="middle" opacity="0.85" letter-spacing="0.4">JP · QUIET</text></svg>',
+      'sf': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="m2" cx="0.55" cy="0.45"><stop offset="0%" stop-color="#312e81"/><stop offset="100%" stop-color="#000"/></radialGradient></defs><rect width="90" height="160" fill="url(#m2)"/><circle cx="18" cy="22" r="0.9" fill="#fff"/><circle cx="38" cy="14" r="0.7" fill="#fff"/><circle cx="65" cy="25" r="1" fill="#fff"/><circle cx="75" cy="40" r="0.8" fill="#fff"/><circle cx="55" cy="80" r="18" fill="#a78bfa" opacity="0.55"/><text x="45" y="150" font-size="8" fill="#fff" text-anchor="middle" opacity="0.85" letter-spacing="0.5">SCI-FI</text></svg>',
+      'mystery': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a1a1a"/><stop offset="100%" stop-color="#450a0a"/></linearGradient></defs><rect width="90" height="160" fill="url(#m3)"/><text x="45" y="92" font-size="46" fill="#dc2626" text-anchor="middle" font-weight="700">?</text><text x="45" y="150" font-size="7" fill="#fff" text-anchor="middle" opacity="0.7" letter-spacing="0.5">MYSTERY</text></svg>',
+      'rainy': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#475569"/><stop offset="100%" stop-color="#0f172a"/></linearGradient></defs><rect width="90" height="160" fill="url(#m4)"/><line x1="14" y1="25" x2="10" y2="50" stroke="#94a3b8" stroke-width="1" opacity="0.6"/><line x1="30" y1="20" x2="26" y2="45" stroke="#94a3b8" stroke-width="1" opacity="0.6"/><line x1="46" y1="30" x2="42" y2="55" stroke="#94a3b8" stroke-width="1" opacity="0.6"/><line x1="60" y1="22" x2="56" y2="47" stroke="#94a3b8" stroke-width="1" opacity="0.6"/><line x1="76" y1="28" x2="72" y2="53" stroke="#94a3b8" stroke-width="1" opacity="0.6"/><line x1="20" y1="65" x2="16" y2="90" stroke="#94a3b8" stroke-width="1" opacity="0.5"/><line x1="50" y1="70" x2="46" y2="95" stroke="#94a3b8" stroke-width="1" opacity="0.5"/><line x1="68" y1="65" x2="64" y2="90" stroke="#94a3b8" stroke-width="1" opacity="0.5"/><text x="45" y="150" font-size="7" fill="#fff" text-anchor="middle" opacity="0.85" letter-spacing="0.4">RAINY DAY</text></svg>',
+      'warm': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fed7aa"/><stop offset="100%" stop-color="#7c2d12"/></linearGradient></defs><rect width="90" height="160" fill="url(#m5)"/><circle cx="45" cy="58" r="20" fill="#fff" opacity="0.45"/><text x="45" y="150" font-size="7" fill="#fff" text-anchor="middle" opacity="0.9" letter-spacing="0.4">WARM HUG</text></svg>',
+      'tale': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#0e7490"/></linearGradient></defs><rect width="90" height="160" fill="url(#m6)"/><polygon points="45,40 51,62 73,62 56,76 62,98 45,84 28,98 34,76 17,62 39,62" fill="#fff" opacity="0.7"/><text x="45" y="150" font-size="7" fill="#fff" text-anchor="middle" opacity="0.85" letter-spacing="0.4">FAIRY TALE</text></svg>',
+      'doc': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m7" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="100%" stop-color="#334155"/></linearGradient></defs><rect width="90" height="160" fill="url(#m7)"/><polyline points="10,90 25,70 40,82 55,55 70,68 80,48" stroke="#22d3ee" stroke-width="1.6" fill="none"/><circle cx="25" cy="70" r="1.5" fill="#22d3ee"/><circle cx="55" cy="55" r="1.5" fill="#22d3ee"/><circle cx="80" cy="48" r="1.5" fill="#22d3ee"/><text x="45" y="150" font-size="6.5" fill="#fff" text-anchor="middle" opacity="0.85" letter-spacing="0.4">DOCUMENTARY</text></svg>',
+      'korea': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m8" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#1f2937"/></linearGradient></defs><rect width="90" height="160" fill="url(#m8)"/><circle cx="45" cy="65" r="22" fill="#fff" opacity="0.85"/><path d="M30 65 Q37 50 45 65 T60 65" fill="none" stroke="#1f2937" stroke-width="2.2"/><text x="45" y="150" font-size="6.5" fill="#fff" text-anchor="middle" opacity="0.9" letter-spacing="0.4">KOREAN CINEMA</text></svg>',
+      'romance': '<svg viewBox="0 0 90 160" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="m9" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fda4af"/><stop offset="100%" stop-color="#9f1239"/></linearGradient></defs><rect width="90" height="160" fill="url(#m9)"/><path d="M45 48 C38 36, 18 40, 18 56 C18 72, 45 92, 45 92 C45 92, 72 72, 72 56 C72 40, 52 36, 45 48 Z" fill="#fff" opacity="0.5"/><text x="45" y="150" font-size="7" fill="#fff" text-anchor="middle" opacity="0.9" letter-spacing="0.4">ROMANCE</text></svg>',
+    };
+    return t[theme] || t['sf'];
+  }
+
+  const archiveDB = {
+    '퇴근 후 보기 좋은 잔잔한 일본영화': {
+      prompt: '하루의 끝, 마음을 가라앉히는 한 편',
+      hits: [
+        { theme: 'jp-quiet', season: '시즌2 EP.05 〈중세시대〉', recommender: '이동진', title: '영화 〈남극의 셰프〉', ott: ['왓챠'], rq: '"퇴근하고 침대에서 보기에 이만한 영화가 또 있을까요."', reason: '남극이라는 극단의 공간에서 사람들이 밥 한 끼로 일상을 회복하는 이야기예요.', url: PLAYLIST },
+        { theme: 'jp-quiet', season: '시즌1 EP.07 〈날씨〉', recommender: '이동진', title: '영화 〈리틀 포레스트: 여름과 가을〉', ott: ['넷플릭스', '왓챠'], rq: '"퇴근하고 한 끼 차려 먹고 싶어지는 영화예요."', reason: '도시에서 시골로 돌아간 한 사람의 사계절. 보고 나면 식탁이 달라져요.', url: PLAYLIST },
+      ],
+    },
+    '주말에 시간 들여 볼 SF 명작': {
+      prompt: '깊이 빠져들 수 있는 한 편',
+      hits: [
+        { theme: 'sf', season: '시즌2 EP.08 〈SF〉', recommender: '궤도', title: '영화 〈인터스텔라〉', ott: ['넷플릭스'], rq: '"3시간을 통째로 비워야 만나는 SF의 정점이에요."', reason: '시간과 사랑이라는 두 축을 SF로 풀어낸 정점이에요.', url: PLAYLIST },
+        { theme: 'sf', season: '시즌6 EP.07 〈프로젝트 헤일메리〉', recommender: '궤도', title: '영화 〈컨택트〉', ott: ['웨이브'], rq: '"외계 생명과 처음 말을 섞는 순간, 그 떨림이 살아 있어요."', reason: '외계 생명과의 첫 접촉을 언어로 풀어낸 SF예요. 헤일메리와 짝으로 보기 좋아요.', url: 'https://youtu.be/h__uoZ15kFE' },
+      ],
+    },
+    '혼자 보기 좋은 미스터리': {
+      prompt: '집중해서 끝까지 따라가는 한 편',
+      hits: [
+        { theme: 'mystery', season: '시즌3 EP.02 〈오컬트〉', recommender: '이동진', title: '영화 〈곡성〉', ott: ['넷플릭스', '왓챠'], rq: '"두 번째로 볼 때 더 무서워지는, 그런 미스터리예요."', reason: '한국 미스터리의 정점이에요. 두 번째 볼 때 더 무서워요.', url: PLAYLIST },
+        { theme: 'mystery', season: '시즌3 EP.09 〈거짓말〉', recommender: '이동진', title: '영화 〈유주얼 서스펙트〉', ott: ['왓챠'], rq: '"결말을 알면서도 다시 돌려 보게 되는 영화입니다."', reason: '결말을 알아도 다시 보고 싶어지는 미스터리의 클래식이에요.', url: PLAYLIST },
+      ],
+    },
+    '비 오는 날에 어울리는 잔잔한 영화': {
+      prompt: '창밖 빗소리와 어울리는 한 편',
+      hits: [
+        { theme: 'rainy', season: '시즌1 EP.07 〈날씨〉', recommender: '안현모', title: '영화 〈화양연화〉', ott: ['왓챠'], rq: '"비 오는 도시 골목이 통째로 한 편의 영화가 돼요."', reason: '왕가위 감독이 그린 홍콩의 1960년대 — 비와 안개와 멜로가 한 화면에 모여요.', url: PLAYLIST },
+        { theme: 'rainy', season: '시즌4 EP.10 〈우울〉', recommender: '이동진', title: '영화 〈조제, 호랑이 그리고 물고기들〉', ott: ['웨이브', '왓챠'], rq: '"비 오는 일요일 오후, 혼자 천천히 보기 좋은 영화예요."', reason: '닿을 듯 닿지 않는 두 사람의 관계가, 빗소리 같은 여운을 남겨요.', url: PLAYLIST },
+      ],
+    },
+    '마음이 헛헛할 때 보기 좋은 영화': {
+      prompt: '오래된 위로의 한 편',
+      hits: [
+        { theme: 'warm', season: '시즌1 EP.05 〈올드머니〉', recommender: '이동진', title: '영화 〈사랑도 통역이 되나요〉', ott: ['넷플릭스'], rq: '"외로운 사람이 외로운 사람을 알아보는 순간을 그려요."', reason: '도쿄의 호텔에서 두 외로운 사람이 만나는 이야기예요. 헛헛함을 그대로 안아줘요.', url: PLAYLIST },
+        { theme: 'warm', season: '시즌4 EP.10 〈우울〉', recommender: '안현모', title: '영화 〈어바웃 타임〉', ott: ['넷플릭스', '왓챠'], rq: '"하루를 한 번 더 살 수 있다면, 어떻게 살아야 할까요."', reason: '시간을 되돌릴 수 있다면 무엇을 다시 살까. 헛헛할 때 다시 봐도 좋아요.', url: PLAYLIST },
+      ],
+    },
+    '어른이 되어 다시 보면 좋은 동화': {
+      prompt: '시간이 흘러야 보이는 결',
+      hits: [
+        { theme: 'tale', season: '시즌3 EP.10 〈엄마〉', recommender: '안현모', title: '애니메이션 〈센과 치히로의 행방불명〉', ott: ['넷플릭스'], rq: '"어른이 되면 치히로보다 부모에게 시선이 가요."', reason: '어렸을 때는 모험으로, 어른이 되면 부모와 노동의 이야기로 다시 보여요.', url: PLAYLIST },
+        { theme: 'tale', season: '시즌3 EP.05 〈공주와 왕자〉', recommender: '이동진', title: '영화 〈하울의 움직이는 성〉', ott: ['넷플릭스'], rq: '"나이 듦에 관한 한 편의 동화로 다시 읽혀요."', reason: '나이 듦에 대한 한 편의 동화예요. 소피의 마음 변화에 다시 시선이 가요.', url: PLAYLIST },
+      ],
+    },
+    '출근길에 가볍게 듣기 좋은 다큐': {
+      prompt: '15분이면 한 회 완주, 머리는 산뜻',
+      hits: [
+        { theme: 'doc', season: '시즌4 EP.06 〈천재〉', recommender: '궤도', title: '다큐 〈코스모스: 시공간 오디세이〉', ott: ['디즈니+'], rq: '"한 회만 봐도 일주일은 사고가 넓어져요."', reason: '천체물리학자 닐 디그래스 타이슨이 끌어가는 우주 다큐. 출근길 한 챕터씩 듣기 딱 좋아요.', url: PLAYLIST },
+        { theme: 'doc', season: '시즌5 EP.05 〈외국어〉', recommender: '안현모', title: '다큐 〈Babel No More〉(BBC)', ott: ['웨이브'], rq: '"외국어가 안 되는 게 내 잘못이 아니라는 위로를 받아요."', reason: '여러 언어를 능숙하게 구사하는 사람들의 뇌를 따라가는 BBC 다큐예요.', url: PLAYLIST },
+      ],
+    },
+    '한 번 더 보고 싶은 한국 영화': {
+      prompt: '두 번째에 더 깊어지는 한 편',
+      hits: [
+        { theme: 'korea', season: '시즌5 EP.12 〈봉준호〉', recommender: '이동진', title: '영화 〈기생충〉', ott: ['넷플릭스', '왓챠'], rq: '"두 번째로 볼 때 비로소 보이는 디테일이 더 많은 영화예요."', reason: '봉준호 감독 특별편에서 정성껏 짚어준 작품. 두 번째 감상이 첫 번째를 능가하는 드문 영화.', url: PLAYLIST },
+        { theme: 'korea', season: '시즌4 EP.04 〈정치와 권력〉', recommender: '이동진', title: '영화 〈헤어질 결심〉', ott: ['넷플릭스', '왓챠'], rq: '"결말의 마지막 한 컷을 위해 한 번 더 봐야 하는 영화입니다."', reason: '박찬욱 감독 미장센의 결정판. 한 번 보면 풀리지 않는 영화, 두 번째에 보입니다.', url: PLAYLIST },
+      ],
+    },
+    '연인과 함께 보기 좋은 영화': {
+      prompt: '주말 밤, 둘이서 천천히',
+      hits: [
+        { theme: 'romance', season: '시즌2 EP.01 〈첫사랑〉', recommender: '안현모', title: '영화 〈비포 선라이즈〉', ott: ['왓챠'], rq: '"하룻밤의 대화가 한 편의 영화가 되는 신기한 작품이에요."', reason: '비엔나의 거리에서 시작되는 하룻밤. 연인과 함께 보면 대화가 길어져요.', url: PLAYLIST },
+        { theme: 'romance', season: '시즌3 EP.01 〈친구〉', recommender: '안현모', title: '영화 〈해리가 샐리를 만났을 때〉', ott: ['웨이브'], rq: '"두 사람이 어떻게 친구에서 연인이 되는지를 보고 싶다면."', reason: '90년대 뉴욕의 가을, 두 사람이 12년에 걸쳐 이어가는 관계를 따라가요.', url: PLAYLIST },
+      ],
+    },
+  };
+
+  function archiveSearch(presetQuery) {
+    const input = document.getElementById('asInput');
+    const q = (presetQuery || input.value || '').trim();
+    if (presetQuery) input.value = presetQuery;
+    const resultEl = document.getElementById('asResult');
+    if (!q) { resultEl.classList.remove('show'); return; }
+
+    const data = archiveDB[q];
+    if (data) {
+      let html = `<div class="as-result-prompt">『${q}』 — ${data.prompt}</div>`;
+      data.hits.forEach(h => {
+        const ottHtml = (h.ott || []).map(o => `<span class="ott-tag">${o}</span>`).join(' ');
+        html += `
+          <div class="as-result-card">
+            <div class="as-result-body">
+              <span class="as-result-recommender">⊙ ${h.recommender} 추천</span>
+              <span class="a-ott" style="margin-left:6px;">${ottHtml}</span>
+              <div class="as-result-meta">${h.season}</div>
+              <div class="as-result-title">${h.title}</div>
+              <div class="as-result-recquote"><strong>${h.recommender}의 한마디</strong>${h.rq}</div>
+              <div class="as-result-reason">${h.reason}</div>
+              <a class="as-result-link" href="${h.url}" target="_blank">라플위클리 토크에서 더 보기 →</a>
+            </div>
+          </div>
+        `;
+      });
+      resultEl.innerHTML = html;
+    } else {
+      resultEl.innerHTML = `
+        <div class="as-result-prompt" style="color:#7a5510;">『${q}』</div>
+        <div class="as-result-reason" style="padding:8px 0;">
+          1호 시연에서는 위 키워드 안에서만 작동해요. 자유 키워드는 곧 라플앱 챗봇에서 만나요.
+        </div>
+      `;
+    }
+    resultEl.classList.add('show');
+  }
+</script>
+
+</body>
+</html>
